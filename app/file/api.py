@@ -39,6 +39,6 @@ class FileAPIView(viewsets.ViewSet):
             for chunk in file_obj.chunks():
                 f.write(chunk)
         return {"data": {
-            "path": "{}/statics/images/{}/{}".format(ServerUrl, timestr, file_obj.name),
+            "path": "{}/static/images/{}/{}".format(ServerUrl, timestr, file_obj.name),
             "name": file_obj.name
         }}

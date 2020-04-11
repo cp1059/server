@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'app'))
 sys.path.insert(0, os.path.join(BASE_DIR, 'lib'))
 
 STATIC_PATH = os.path.join( BASE_DIR , 'static' )
-IMAGE_PATH = os.path.join( STATIC_PATH , 'images' )
+IMAGE_PATH = os.path.join( STATIC_PATH , 'resource' )
 
 
 # Quick-start development settings - unsuitable for production

@@ -190,6 +190,7 @@ class FilterAPIView(viewsets.ViewSet):
 
         return {"data": {
             "id":cpObj['id'],
+            "url":cpObj['url'],
             "name":cpObj['name'],
             "downtime":cpObj['downtime'],
             "cpnohistory":cpObj['cpnohistory'],

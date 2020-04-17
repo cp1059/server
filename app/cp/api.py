@@ -124,6 +124,9 @@ class CpAPIView(viewsets.ViewSet):
         serializer = kwargs.pop("serializer")
         obj = serializer.save()
 
+        if obj.endtime > obj.termnum * 60 /2:
+            raise PubErrorCustom("倒计时提前时间不能超过每一期时间的一半！")
+
         obj.termtot = countTotTerm(obj.opentime,obj.termnum)
         obj.tasktimetable = json.dumps({"tables":create_task_table(obj)})
         obj.save()
@@ -145,8 +148,7 @@ class CpAPIView(viewsets.ViewSet):
         obj = RedisCaCheHandler(
             method="filter",
             serialiers="CpModelSerializerToRedis",
-            table="cp",
-            filter_value=request.query_params_format
+            table="cp"
         ).run()
 
         return {"data": obj}
@@ -195,8 +197,7 @@ class CpAPIView(viewsets.ViewSet):
         obj = RedisCaCheHandler(
             method="filter",
             serialiers="CpBigTypeModelSerializerToRedis",
-            table="cpbigtype",
-            filter_value=request.query_params_format
+            table="cpbigtype"
         ).run()
 
         return {"data": obj}
@@ -244,8 +245,7 @@ class CpAPIView(viewsets.ViewSet):
         obj = RedisCaCheHandler(
             method="filter",
             serialiers="CpSmallTypeModelSerializerToRedis",
-            table="cpsmalltype",
-            filter_value=request.query_params_format
+            table="cpsmalltype"
         ).run()
 
         return {"data": obj}
@@ -291,8 +291,7 @@ class CpAPIView(viewsets.ViewSet):
         obj = RedisCaCheHandler(
             method="filter",
             serialiers="CpMiniTypeModelSerializerToRedis",
-            table="cpminitype",
-            filter_value=request.query_params_format
+            table="cpminitype"
         ).run()
 
         return {"data": obj}
@@ -339,7 +338,7 @@ class CpAPIView(viewsets.ViewSet):
             method="filter",
             serialiers="CpGamesModelSerializerToRedis",
             table="cpgames",
-            filter_value=request.query_params_format
+            filter_value=request.query_params_format.get("filter_value")
         ).run()
 
         return {"data": obj}

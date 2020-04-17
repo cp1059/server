@@ -37,7 +37,8 @@ class Cp(models.Model):
                                 """,
                                 default='{}')
 
-    tasktimetable = models.TextField(verbose_name="任务时间表",default='{"tables":[]}',blank=True)
+    endtime  = models.IntegerField(verbose_name="距离开奖封盘时间,单位s",default=0)
+    tasktimetable = models.TextField(verbose_name="开奖任务时间表(带期数ID)",default='{"tables":[]}',blank=True)
 
     createtime=models.BigIntegerField(default=0)
 
@@ -177,24 +178,30 @@ class CpGames(models.Model):
                     wfts:玩法提示
                     zjsm:中奖说明
                     fl:范例
-                ratetype: 赔率方式 0-唯一赔率,1-每一位号码都有赔率,2-指定玩法赔率
+                ratetype: 赔率方式 0-唯一赔率,1-每一位号码都有赔率,2-指定玩法赔率,3-指定赔率范围
                 rate: 赔率,当ratetype=='0' 的时候使用此处的值
                 rates: 赔率,当ratetype=='2' 的时候使用此处的值
                     此时此处赔率是指定某一玩法的ID 
                     例如：['G0001','G0002']  当满足其中某一条件的时候触发该玩法赔率!
-                iscompound: 是否复式 0-是,1-否
+                iscompound: 是否排列组合 0-是,1-否
+                isdan : 模式选择 0-单式 1-复式 2-组选
+                isdanshowhelp:是否显示单式帮助信息 0-是,1-否
+                nolen : 选号长度
+                zs: 选号注数
+                zsflag: 注数模式 0-固定注数,1-选号注数 默认为标准模式
                 show : 前端显示每一位的号码
                     name: 每一行的名字
                     value: 每一位的具体数据
                         id: 号码
                         rate: 赔率,当ratetype=='1'的时候使用此处的值
+                        zs: 注数
                     showhelp: 是否显示帮助信息 0-是,1-否
                     maxminrange: 帮助信息中大小中间值小于等于他，大于他
                     selectrange: 机选范围
-                    manyrange: 多选范围
-                        
+                    repeat: 几重号 
+                    manyrange: 多选范围  
             """,
-            default='{"memo":{"wfts":"","zjsm":"","fl":""},"ratetype":"0","rate":"0","iscompound":"1","rates":[],"show":[]}')
+            default='{"memo":{"wfts":"","zjsm":"","fl":""},"repeat":1,"zs":1,"ratetype":"0","rate":"0","nolen":0,"iscompound":"1","isdanshowhelp":"1","isdan":"1","rates":[],"show":[]}')
 
     createtime = models.BigIntegerField(default=0)
 

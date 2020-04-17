@@ -12,7 +12,7 @@ from lib.utils.db import RedisCaCheHandlerBase
 from app.cp.models import CpTermList,Cp
 from app.cp.serialiers import CpTermListModelSerializer
 
-from app.cp.utils import count_downtime,get_open_history,get_open_term
+from app.cp.utils import count_downtime,get_open_history,get_open_term,get_rate,showdatetime
 
 class FilterAPIView(viewsets.ViewSet):
 
@@ -70,7 +70,12 @@ class FilterAPIView(viewsets.ViewSet):
 
         data = CpTermListModelSerializer(CpTermList.objects.filter(),many=True).data
 
-        data = [ dict(item) for item in data]
+        # def updtimeshow(s):
+        #     s['createtime'] = showdatetime(s['createtime'])
+        #     return s
+        # data = list(map( updtimeshow, [ dict(item) for item in data ]))
+        # print(data)
+        data =  [ dict(item) for item in data ]
         data.sort(key=lambda k: (k.get('cp').get('sort',0)), reverse=False)
 
         return {"data":data}
@@ -184,9 +189,11 @@ class FilterAPIView(viewsets.ViewSet):
                 minitype['games'].sort(key=lambda k: (k.get('sort', 0)), reverse=False)
 
 
+                for item in minitype['games']:
+                    item['rules']['rate'] = get_rate(item['rules'])
+
         cpObj['cpnohistory'] = get_open_history(cpObj)
-        cpObj['openterm'] = get_open_term(cpObj)
-        cpObj['downtime'] = count_downtime(cpObj)
+        cpObj['downterm'],cpObj['downtime'] = count_downtime(cpObj)
 
         return {"data": {
             "id":cpObj['id'],
@@ -194,7 +201,7 @@ class FilterAPIView(viewsets.ViewSet):
             "name":cpObj['name'],
             "downtime":cpObj['downtime'],
             "cpnohistory":cpObj['cpnohistory'],
-            "openterm":cpObj['openterm'],
+            "downterm":cpObj['downterm'],
             "smalltype":cpObj['smalltype']
         }}
 

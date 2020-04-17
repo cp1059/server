@@ -6,6 +6,7 @@ from app.cp.models import Cp,CpTermList,CpBigType,CpSmallType,CpMiniType,CpGames
 from app.cache.utils import RedisCaCheHandler
 
 from lib.utils.mytime import UtilTime
+from app.cp.utils import showdatetime
 
 
 class CpModelSerializer(serializers.ModelSerializer):
@@ -29,20 +30,7 @@ class CpTermListModelSerializer(serializers.ModelSerializer):
 
     def get_showtime(self,obj):
 
-        t = UtilTime().timestamp_to_string(obj.createtime,format_v="%Y%m%d %H:%M:%S")
-
-        t1 = t[:8]
-        t2 = UtilTime().arrow_to_string(format_v="YYYYMMDD")
-
-        r=""
-        if int(t2) - int(t1)==0:
-            r="今天"
-        elif int(t2) - int(t1)==1:
-            r="昨天"
-        else:
-            r="未知"
-
-        return "{}{}".format(r,t[8:])
+        return showdatetime(obj.createtime)
 
 
     def get_cp(self,obj):

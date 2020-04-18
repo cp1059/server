@@ -26,7 +26,18 @@ class Cp(models.Model):
     status = models.CharField(max_length=1,verbose_name="状态,0-正常,1-停售,2-维护")
 
     code = models.TextField(verbose_name="爬虫代码",default='{"code":[]}')
-    coderule = models.CharField(max_length=20,verbose_name="期号排序规则",default="")
+    coderule = models.CharField(max_length=1024,verbose_name="""
+                                    期号生成规则:
+                                        before:{
+                                            type:  期号前缀生成方法 0-按照日期格式,1-按固定前缀 
+                                            value: 当为0是此处是日期格式,为1时为固定前缀
+                                        }
+                                        after:{
+                                            type : 期号后缀生成方法 0-按固定位数ID自增长
+                                            value: 当为0时,此为后缀位数
+                                        }
+                                    """,
+                                default='{"before":{"type":"0","value":"YYYYMMDD"},"after":{"type":"0","value":"4"}}')
     cpnorule = models.CharField(max_length=1024,
                                 verbose_name="""
                                     {"tot":6,"count":1,"limit":[0,1,2,3,4,5,6,7,8,9]}

@@ -47,8 +47,11 @@ def count_end_time(opentime,endtime):
     return "%02d%02d%02d" % ((p // 3600), (p % 3600 // 60),(p % 3600 % 60))
 
 def get_autoid(cp,i):
-
-    term = "%0{}d".format(len(cp.coderule) if cp.coderule else len(str(cp.termtot)))
+    rules = json.loads(cp.coderule)
+    if rules['after']['type'] == '0':
+        term = "%0{}d".format(int(rules['after']['value']))
+    else:
+        raise PubErrorCustom("期数生成规则有误!")
 
     return term % (i)
 
@@ -109,12 +112,19 @@ def get_downdata(cp):
         "downtime":downtime
     }
 
+def get_cp_term_coderules_before(cp,ut):
+    if cp['coderule']['before']['type'] == '0':
+        today = ut.arrow_to_string(format_v=cp['coderule']['before']['value'])
+        tomorrow = ut.arrow_to_string(ut.today.shift(days=1), format_v=cp['coderule']['before']['value'])
+        return today,tomorrow
+    else:
+        raise PubErrorCustom("暂不支持!")
+
 def count_downtime(cp):
 
     currterm=""
     ut = UtilTime()
-    today = ut.arrow_to_string(format_v="YYYYMMDD")
-    tomorrow = ut.arrow_to_string(ut.today.shift(days=1), format_v="YYYYMMDD")
+    today,tomorrow = get_cp_term_coderules_before(cp,ut)
     currtime = ut.arrow_to_string(format_v="HHmmss")
     tables=json.loads(cp['tasktimetable'])['tables']
     tables.sort(key=lambda k: (k.get('id')), reverse=False)

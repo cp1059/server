@@ -51,6 +51,8 @@ class CpModelSerializerToRedis(serializers.ModelSerializer):
 
     cpnorule = serializers.SerializerMethodField()
 
+    coderule = serializers.SerializerMethodField()
+
     def get_cpnorule(self,obj):
         r = json.loads(obj.cpnorule)
         if len(r):
@@ -65,6 +67,9 @@ class CpModelSerializerToRedis(serializers.ModelSerializer):
     def get_code(self,obj):
 
         return json.loads(obj.code)
+
+    def get_coderule(self,obj):
+        return json.loads(obj.coderule)
 
     def get_type_format(self,obj):
 

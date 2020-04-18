@@ -1,7 +1,7 @@
 
 import re,json
 from requests import request as requestTmp
-
+from bs4 import BeautifulSoup
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
 
@@ -107,7 +107,7 @@ class CpAPIView(viewsets.ViewSet):
         context={}
         exec(code,context)
         res = context["customFuncForCp"]
-        res = res(requestTmp,re,json)
+        res = res(request=requestTmp,re=re,json=json,BeautifulSoup=BeautifulSoup)
         try:
             return {"data": "测试成功\n数据为(当前期:{}  当前开奖号:{}  下一期:{})".format(res[0],res[1],res[2])}
         except Exception as e:

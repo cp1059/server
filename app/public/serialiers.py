@@ -2,8 +2,14 @@
 
 
 from rest_framework import serializers
-from app.public.models import Banner,Video
+from app.public.models import Banner,Video,Holiday
 
+
+class HolidayModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Holiday
+        fields = '__all__'
 
 class BannerModelSerializer(serializers.ModelSerializer):
 

@@ -5,7 +5,7 @@ from rest_framework import serializers
 from lib.utils.mytime import UtilTime
 from lib.utils.exceptions import PubErrorCustom
 from app.user.models import Users,Role
-from app.public.models import Banner,Video
+from app.public.models import Banner,Video,Holiday
 
 from app.cp.models import Cp,CpBigType,CpSmallType,CpMiniType,CpGames
 
@@ -39,6 +39,13 @@ class RoleModelSerializerToRedis(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = '__all__'
+
+class HolidayModelSerializerToRedis(serializers.ModelSerializer):
+
+    class Meta:
+        model = Holiday
+        fields = '__all__'
+
 
 
 class CpModelSerializerToRedis(serializers.ModelSerializer):

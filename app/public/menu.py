@@ -52,11 +52,11 @@ first = [
                 "children": []
             },
             {
-                "label": "视频",
-                "path": 'video',
-                "component": 'views/custom/publicinfo/video',
+                "label": "节假日维护",
+                "path": 'holiday',
+                "component": 'views/custom/publicinfo/holiday',
                 "meta": {
-                    "i18n": 'video'
+                    "i18n": 'holiday'
                 },
                 "icon": 'el-icon-setting',
                 "children": []

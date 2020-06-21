@@ -21,6 +21,20 @@ class Banner(models.Model):
         verbose_name_plural = verbose_name
         db_table = 'banner'
 
+class Holiday(models.Model):
+
+    id=models.AutoField(primary_key=True)
+    year = models.CharField(max_length=4,verbose_name="年")
+
+    start_date = models.CharField(max_length=5,verbose_name="开始日期")
+    end_date = models.CharField(max_length=5,verbose_name="日期")
+    memo = models.CharField(max_length=60,verbose_name="说明")
+
+    class Meta:
+        verbose_name = '节假日表(停止售彩)'
+        verbose_name_plural = verbose_name
+        db_table = 'holiday'
+
 
 class Video(models.Model):
 

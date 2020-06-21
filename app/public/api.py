@@ -13,8 +13,8 @@ from app.cp.models import Cp,CpBigType,CpSmallType,CpMiniType,CpGames
 from app.cache.utils import RedisCaCheHandler
 
 
-from app.public.serialiers import BannerModelSerializer,VideoModelSerializer
-from app.public.models import Banner,Video
+from app.public.serialiers import BannerModelSerializer,VideoModelSerializer,HolidayModelSerializer
+from app.public.models import Banner,Video,Holiday
 
 class PublicAPIView(viewsets.ViewSet):
 
@@ -231,3 +231,51 @@ class PublicAPIView(viewsets.ViewSet):
             must_key_value=request.data_format.get('id')).run()
 
         return None
+
+
+    @list_route(methods=['POST'])
+    @Core_connector(isTransaction=True,
+                    isPasswd=True,
+                    isTicket=True,
+                    serializer_class=HolidayModelSerializer,
+                    model_class=Holiday)
+    def saveHoliday(self, request, *args, **kwargs):
+
+        serializer = kwargs.pop("serializer")
+        obj = serializer.save()
+
+        RedisCaCheHandler(
+            method="save",
+            serialiers="HolidayModelSerializerToRedis",
+            table="holiday",
+            filter_value=obj,
+            must_key="id",
+        ).run()
+
+        return None
+
+
+    @list_route(methods=['POST'])
+    @Core_connector(isTransaction=True, isTicket=True, isPasswd=True)
+    def delHoliday(self, request, *args, **kwargs):
+
+        Holiday.objects.filter(id=request.data_format.get('id')).delete()
+
+        RedisCaCheHandler(
+            method="delete",
+            table="holiday",
+            must_key_value=request.data_format.get('id')).run()
+
+        return None
+
+    @list_route(methods=['GET'])
+    @Core_connector(isPasswd=True, isTicket=True, isPagination=True)
+    def getHoliday(self, request, *args, **kwargs):
+
+        obj = RedisCaCheHandler(
+            method="filter",
+            serialiers="HolidayModelSerializerToRedis",
+            table="holiday"
+        ).run()
+
+        return {"data": obj}

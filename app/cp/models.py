@@ -185,6 +185,7 @@ class CpGames(models.Model):
     rules = models.TextField(
             verbose_name="""
                 玩法规则
+                wincode: 彩票拆分规则代码
                 memo :玩法提示
                     wfts:玩法提示
                     zjsm:中奖说明
@@ -212,7 +213,7 @@ class CpGames(models.Model):
                     repeat: 几重号 
                     manyrange: 多选范围  
             """,
-            default='{"memo":{"wfts":"","zjsm":"","fl":""},"repeat":1,"zs":1,"ratetype":"0","rate":"0","nolen":0,"iscompound":"1","isdanshowhelp":"1","isdan":"1","rates":[],"show":[]}')
+            default='{"wincode":"","memo":{"wfts":"","zjsm":"","fl":""},"repeat":1,"zs":1,"ratetype":"0","rate":"0","nolen":0,"iscompound":"1","isdanshowhelp":"1","isdan":"1","rates":[],"show":[]}')
 
     createtime = models.BigIntegerField(default=0)
 

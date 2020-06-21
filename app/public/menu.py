@@ -13,7 +13,27 @@ menu_top = [
 ]
 
 first = [
-{
+    {
+        "label": "用户",
+        "path": '/user',
+        "meta": {
+            "i18n": 'user',
+        },
+        "icon": 'el-icon-setting',
+        "children": [
+            {
+                "label": "用户列表",
+                "path": 'user',
+                "component": 'views/custom/user/user',
+                "meta": {
+                    "i18n": 'user'
+                },
+                "icon": 'el-icon-setting',
+                "children": []
+            },
+        ]
+    },
+    {
         "label": "公共",
         "path": '/publicinfo',
         "meta": {

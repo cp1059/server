@@ -1,13 +1,18 @@
 
 
 import json
-
+import itertools
 from lib.utils.mytime import UtilTime
 from lib.utils.exceptions import PubErrorCustom
 
 from app.cp.models import CpTermListHistory,CpTermList
 from django.db.models import Q
 from app.cache.utils import RedisCaCheHandler
+from app.order.models import Order
+from app.cp.models import CpTermListHistory
+from app.user.models import Users
+from decimal import *
+
 
 
 def countTotTerm(opentime,termnum):
@@ -219,3 +224,48 @@ def get_rate(rules):
         return rates
     else:
         return rules['rate']
+
+def winHandler(orderid):
+
+    try:
+        order = Order.objects.select_for_update().get(orderid=orderid)
+        games = RedisCaCheHandler(
+            method="get",
+            serialiers="CpGamesModelSerializerToRedis",
+            table="cpgames",
+            must_key_value=order.gamesid).run()
+        if not games:
+            raise PubErrorCustom("无此玩法!")
+
+        try:
+            cpno = CpTermListHistory.objects.get(cpid=order.cpid,term=order.term).cpno
+        except CpTermListHistory.DoesNotExist:
+            return False
+
+        if wincode_run(order,games,cpno):
+            Order.status = '1'
+            user = Users.objects.get(userid=order.userid)
+            user.bal += order.amount
+            user.save()
+            order.save()
+            return True
+
+    except Order.DoesNotExist:
+        raise PubErrorCustom("无此订单!")
+
+    return False
+
+def compose_y(no):
+    print(no)
+    d = []
+    for item in itertools.product(*no):
+        d.append(item)
+
+    return d
+
+def wincode_run(order,games,confirmNo):
+    context = {}
+    code = games['wincode']
+    exec(code, context)
+    cpNo = compose_y([item['cp'] for item in order.cpno])
+    return context["customFuncForCpWin"](cpNo=cpNo,confirmNo=confirmNo)

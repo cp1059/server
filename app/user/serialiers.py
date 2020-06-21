@@ -19,6 +19,7 @@ class UsersModelSerializer(serializers.ModelSerializer):
 
     createtime_format = serializers.SerializerMethodField()
     bal = serializers.DecimalField(max_digits=16, decimal_places=2)
+    status_format = serializers.SerializerMethodField()
 
     rolename = serializers.SerializerMethodField()
 
@@ -32,6 +33,15 @@ class UsersModelSerializer(serializers.ModelSerializer):
 
     def get_createtime_format(self,obj):
         return UtilTime().timestamp_to_string(obj.createtime)
+
+    def get_status_format(self,obj):
+
+        if obj.status == '0':
+            return "正常"
+        elif obj.status == '1':
+            return "到期"
+        else:
+            return "冻结"
 
     class Meta:
         model = Users

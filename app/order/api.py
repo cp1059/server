@@ -10,9 +10,25 @@ from app.cache.utils import RedisCaCheHandler
 from app.user.models import Users
 from decimal import *
 from app.order.serialiers import OrderSerializer
-from app.cp.utils import get_rate,get_downdata
+from app.cp.utils import get_rate,get_downdata,winHandler
 
 class OrderAPIView(viewsets.ViewSet):
+
+
+    @list_route(methods=['POST'])
+    @Core_connector(isTransaction=True)
+    def orderWin(self,request):
+        cpid = request.data.get("cpid",None)
+        term = request.data.get("term",None)
+
+        if not cpid:
+            raise PubErrorCustom("cpid is void!")
+        if not term:
+            raise PubErrorCustom("term is void!")
+
+
+
+        pass
 
 
     @list_route(methods=['POST'])
@@ -30,7 +46,6 @@ class OrderAPIView(viewsets.ViewSet):
             user = Users.objects.select_for_update().get(userid=request.user['userid'],status='0')
         except Users.DoesNotExist:
             raise PubErrorCustom("非法用户!")
-
 
         RCaCheClassGames = RedisCaCheHandler()
 

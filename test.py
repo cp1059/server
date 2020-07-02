@@ -2,6 +2,7 @@
 import itertools
 
 
+
 def compose_y(no):
     print(no)
     d = []

@@ -21,6 +21,8 @@ class Cp(models.Model):
 
     opentime = models.CharField(max_length=100,default='0030-0310|0730-2350',verbose_name="每天开奖时间")
 
+    ispc = models.CharField(max_length=1,verbose_name="期号是否走爬虫规则,0-是,1-否",default="1")
+
     type = models.CharField(max_length=1,verbose_name="类型,0-官方,1-私有 官方数据需要做采集",default=0)
 
     status = models.CharField(max_length=1,verbose_name="状态,0-正常,1-停售,2-维护")
@@ -70,6 +72,7 @@ class CpTermList(models.Model):
     cpno = models.CharField(verbose_name="开奖号码",max_length=60,default="")
     currterm = models.CharField(verbose_name="当前期数", max_length=30, default="")
     nextterm = models.CharField(verbose_name="下一期数", max_length=30, default="")
+    nexttime = models.BigIntegerField(default=0)
     createtime = models.BigIntegerField(default=0)
 
     def save(self, *args, **kwargs):

@@ -18,7 +18,6 @@ from app.cp.serialiers import CpModelSerializer,\
 
 from app.cp.utils import countTotTerm,create_task_table
 
-
 class CpAPIView(viewsets.ViewSet):
 
 
@@ -124,12 +123,13 @@ class CpAPIView(viewsets.ViewSet):
         serializer = kwargs.pop("serializer")
         obj = serializer.save()
 
-        if obj.endtime > obj.termnum * 60 /2:
-            raise PubErrorCustom("倒计时提前时间不能超过每一期时间的一半！")
+        if obj.pc != '0':
+            if obj.endtime > obj.termnum * 60 /2:
+                raise PubErrorCustom("倒计时提前时间不能超过每一期时间的一半！")
 
-        obj.termtot = countTotTerm(obj.opentime,obj.termnum)
-        obj.tasktimetable = json.dumps({"tables":create_task_table(obj)})
-        obj.save()
+            obj.termtot = countTotTerm(obj.opentime,obj.termnum)
+            obj.tasktimetable = json.dumps({"tables":create_task_table(obj)})
+            obj.save()
 
         RedisCaCheHandler(
             method="save",
@@ -166,7 +166,6 @@ class CpAPIView(viewsets.ViewSet):
             must_key_value=request.data_format.get('id')).run()
 
         return None
-
 
 
     @list_route(methods=['POST'])

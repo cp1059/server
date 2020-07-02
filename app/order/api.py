@@ -25,11 +25,7 @@ class OrderAPIView(viewsets.ViewSet):
             raise PubErrorCustom("cpid is void!")
         if not term:
             raise PubErrorCustom("term is void!")
-
-
-
         pass
-
 
     @list_route(methods=['POST'])
     @Core_connector(isPasswd=True,isTicket=True,isTransaction=True)

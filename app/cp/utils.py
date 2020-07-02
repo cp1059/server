@@ -125,33 +125,73 @@ def get_cp_term_coderules_before(cp,ut):
     else:
         raise PubErrorCustom("暂不支持!")
 
+def count_time_strand(t):
+
+    if t:
+        ut = UtilTime()
+
+        today = ut.today
+
+        dissday = (t - today)
+
+        days = dissday.days
+        seconds = dissday.seconds
+
+        hours = days * 24 + seconds // 3600
+        minutes = (seconds % 3600) // 60
+        seconds = seconds % 60
+
+        return {
+            "d":days,
+            "h":hours,
+            "m":minutes,
+            "s":seconds
+        }
+    else:
+        return {
+            "d":0,
+            "h":0,
+            "m":0,
+            "s":0
+        }
+
 def count_downtime(cp):
 
-    currterm=""
-    ut = UtilTime()
-    today,tomorrow = get_cp_term_coderules_before(cp,ut)
-    currtime = ut.arrow_to_string(format_v="HHmmss")
-    tables=json.loads(cp['tasktimetable'])['tables']
-    tables.sort(key=lambda k: (k.get('id')), reverse=False)
-    isFlag = False
-    for tItem in tables:
-        item = tItem['endtime']
-        if int(currtime) < int(item):
-            currterm=getDownTerm(today,tItem['id'])
+    if cp.ispc=='0':
+        try:
+            ctlObj = CpTermList.objects.get(cpid=cp['id'])
+        except CpTermList.DoesNotExist:
+            ctlObj = None
+
+        currterm = ctlObj.nextterm if ctlObj else None
+
+        return currterm,count_time_strand(ctlObj.nexttime if ctlObj else None)
+    else:
+        currterm=""
+        ut = UtilTime()
+        today,tomorrow = get_cp_term_coderules_before(cp,ut)
+        currtime = ut.arrow_to_string(format_v="HHmmss")
+        tables=json.loads(cp['tasktimetable'])['tables']
+        tables.sort(key=lambda k: (k.get('id')), reverse=False)
+        isFlag = False
+        for tItem in tables:
+            item = tItem['endtime']
+            if int(currtime) < int(item):
+                currterm=getDownTerm(today,tItem['id'])
+                end_time = (int(item[:2]) * 60 * 60) + (int(item[2:4]) * 60) + int(item[4:])
+                start_time = (int(currtime[:2]) * 60 * 60) + (int(currtime[2:4]) * 60) + int(currtime[4:])
+                currtime = end_time - start_time
+                isFlag = True
+                break
+
+        if not isFlag:
+            currterm = getDownTerm(tomorrow, tables[0]['id'])
+            item = tables[0]['endtime']
             end_time = (int(item[:2]) * 60 * 60) + (int(item[2:4]) * 60) + int(item[4:])
             start_time = (int(currtime[:2]) * 60 * 60) + (int(currtime[2:4]) * 60) + int(currtime[4:])
-            currtime = end_time - start_time
-            isFlag = True
-            break
+            currtime = end_time + (1 * 24 * 60 * 60) - start_time
 
-    if not isFlag:
-        currterm = getDownTerm(tomorrow, tables[0]['id'])
-        item = tables[0]['endtime']
-        end_time = (int(item[:2]) * 60 * 60) + (int(item[2:4]) * 60) + int(item[4:])
-        start_time = (int(currtime[:2]) * 60 * 60) + (int(currtime[2:4]) * 60) + int(currtime[4:])
-        currtime = end_time + (1 * 24 * 60 * 60) - start_time
-
-    return currterm,{"h": currtime // 3600, "m": currtime % 3600 // 60, "s": currtime % 60}
+        return currterm,{"h": currtime // 3600, "m": currtime % 3600 // 60, "s": currtime % 60}
 
 
 def showdatetime(createtime):

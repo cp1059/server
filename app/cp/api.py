@@ -123,7 +123,7 @@ class CpAPIView(viewsets.ViewSet):
         serializer = kwargs.pop("serializer")
         obj = serializer.save()
 
-        if obj.pc != '0':
+        if obj.ispc != '0':
             if obj.endtime > obj.termnum * 60 /2:
                 raise PubErrorCustom("倒计时提前时间不能超过每一期时间的一半！")
 

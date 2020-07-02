@@ -157,7 +157,7 @@ def count_time_strand(t):
 
 def count_downtime(cp):
 
-    if cp.ispc=='0':
+    if cp['ispc']=='0':
         try:
             ctlObj = CpTermList.objects.get(cpid=cp['id'])
         except CpTermList.DoesNotExist:

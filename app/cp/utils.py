@@ -157,6 +157,8 @@ def count_time_strand(t):
 
 def count_downtime(cp):
 
+    ut = UtilTime()
+
     if cp['ispc']=='0':
         try:
             ctlObj = CpTermList.objects.get(cpid=cp['id'])
@@ -165,10 +167,9 @@ def count_downtime(cp):
 
         currterm = ctlObj.nextterm if ctlObj else None
 
-        return currterm,count_time_strand(ctlObj.nexttime if ctlObj else None)
+        return currterm,count_time_strand(ut.timestamp_to_arrow(ctlObj.nexttime) if ctlObj else None)
     else:
         currterm=""
-        ut = UtilTime()
         today,tomorrow = get_cp_term_coderules_before(cp,ut)
         currtime = ut.arrow_to_string(format_v="HHmmss")
         tables=json.loads(cp['tasktimetable'])['tables']

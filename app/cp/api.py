@@ -7,7 +7,7 @@ from rest_framework.decorators import list_route
 
 from lib.core.decorator.response import Core_connector
 from lib.utils.db import RedisCaCheHandlerBase
-
+from lib.utils.mytime import UtilTime
 from lib.utils.exceptions import PubErrorCustom
 
 from app.cache.utils import RedisCaCheHandler
@@ -106,9 +106,9 @@ class CpAPIView(viewsets.ViewSet):
         context={}
         exec(code,context)
         res = context["customFuncForCp"]
-        res = res(request=requestTmp,re=re,json=json,BeautifulSoup=BeautifulSoup)
+        res = res(request=requestTmp,re=re,json=json,BeautifulSoup=BeautifulSoup,ut=UtilTime)
         try:
-            return {"data": "测试成功\n数据为(当前期:{}  当前开奖号:{}  下一期:{})".format(res[0],res[1],res[2])}
+            return {"data": "测试成功\n数据为(当前期:{}  当前开奖号:{}  下一期:{} 下期时间:{})".format(res[0],res[1],res[2],res[3] if len(res)>3 else 0)}
         except Exception as e:
             return {"data":str(e)}
 

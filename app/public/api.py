@@ -333,6 +333,7 @@ class PublicAPIView(viewsets.ViewSet):
     @list_route(methods=['GET'])
     @Core_connector(isPasswd=True)
     def sysSettingGet(self, request):
+        print("fsdfsdfsdfsdf")
         res = RedisUserSysSetting().get()
         print(res)
 

@@ -227,4 +227,5 @@ class RedisUserSysSetting(RedisHandler):
 
     def get(self):
         res = self.redis_client.get(self.key)
+        logger.info(res)
         return json.loads(res.decode('utf-8')) if res else {}

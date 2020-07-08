@@ -144,7 +144,7 @@ first = [
             {
                 "label": "app版本管理",
                 "path": 'appHandler',
-                "component": 'views/systeminfo/appHandler',
+                "component": 'views/custom/systeminfo/appHandler',
                 "meta": {
                     "i18n": 'appHandler'
                 },

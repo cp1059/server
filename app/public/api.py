@@ -16,7 +16,7 @@ from app.cache.utils import RedisCaCheHandler
 from app.public.serialiers import BannerModelSerializer,VideoModelSerializer,HolidayModelSerializer
 from app.public.models import Banner,Video,Holiday
 
-from lib.utils.db import RedisAppHandler
+from lib.utils.db import RedisAppHandler,RedisUserSysSetting
 from lib.utils.exceptions import PubErrorCustom
 
 class PublicAPIView(viewsets.ViewSet):
@@ -314,3 +314,24 @@ class PublicAPIView(viewsets.ViewSet):
     def appGet(self, request):
 
         return {"data":RedisAppHandler().get()}
+
+    @list_route(methods=['POST'])
+    @Core_connector(isPasswd=True)
+    def sysSettingUpdate(self, request):
+
+        ggl = request.data_format.get("ggl", None)
+
+        if not ggl:
+            raise PubErrorCustom("公告栏消息不能为空!")
+
+        RedisUserSysSetting().set(data={
+            "ggl": ggl
+        })
+
+        return None
+
+    @list_route(methods=['GET'])
+    @Core_connector(isPasswd=True)
+    def sysSettingGet(self, request):
+
+        return {"data":RedisUserSysSetting().get()}

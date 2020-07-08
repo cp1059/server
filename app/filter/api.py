@@ -14,6 +14,8 @@ from app.cp.serialiers import CpTermListModelSerializer
 
 from app.cp.utils import count_downtime,get_open_history,get_open_term,get_rate,showdatetime
 
+from lib.utils.db import RedisUserSysSetting
+
 class FilterAPIView(viewsets.ViewSet):
 
     @list_route(methods=['GET'])
@@ -24,7 +26,8 @@ class FilterAPIView(viewsets.ViewSet):
         """
         rdata={
             "banners":[],
-            "cp":[]
+            "cp":[],
+            "ggl":RedisUserSysSetting().get()
         }
 
         #轮播图数据

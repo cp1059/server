@@ -142,6 +142,16 @@ first = [
         "icon": 'el-icon-setting',
         "children": [
             {
+                "label": "系统设置",
+                "path": 'sys_setting',
+                "component": 'views/custom/systeminfo/sys_setting',
+                "meta": {
+                    "i18n": 'sys_setting'
+                },
+                "icon": 'el-icon-setting',
+                "children": []
+            },
+            {
                 "label": "app版本管理",
                 "path": 'appHandler',
                 "component": 'views/custom/systeminfo/appHandler',

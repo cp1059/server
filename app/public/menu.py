@@ -142,6 +142,16 @@ first = [
         "icon": 'el-icon-setting',
         "children": [
             {
+                "label": "app版本管理",
+                "path": 'appHandler',
+                "component": 'views/systeminfo/appHandler',
+                "meta": {
+                    "i18n": 'appHandler'
+                },
+                "icon": 'el-icon-setting',
+                "children": []
+            },
+            {
                 "label": "初始化项目",
                 "path": 'InitProject',
                 "component": 'views/custom/systeminfo/InitProject',

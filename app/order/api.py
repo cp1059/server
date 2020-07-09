@@ -11,6 +11,7 @@ from app.user.models import Users
 from decimal import *
 from app.order.serialiers import OrderSerializer
 from app.cp.utils import get_rate,get_downdata,winHandler
+from lib.utils.mytime import UtilTime
 
 class OrderAPIView(viewsets.ViewSet):
 
@@ -138,6 +139,54 @@ class OrderAPIView(viewsets.ViewSet):
 
         return { "data" : OrderSerializer(orders,many=True).data }
 
+    @list_route(methods=['GET'])
+    @Core_connector(isPasswd=True, isTicket=True)
+    def getOrderWeb(self, request):
+
+        query_format = str()
+        query_params = list()
+
+        if request.query_params_format.get("cpid"):
+            query_format = query_format + " and t1.cpid =%s"
+            query_params.append(request.query_params_format.get("cpid"))
+
+        if request.query_params_format.get("status"):
+            query_format = query_format + " and t1.status =%s"
+            query_params.append(request.query_params_format.get("status"))
+
+        if request.query_params_format.get("userid"):
+            query_format = query_format + " and t1.userid =%s"
+            query_params.append(request.query_params_format.get("userid"))
+
+        if request.query_params_format.get("orderid"):
+            query_format = query_format + " and t1.orderid =%s"
+            query_params.append(request.query_params_format.get("orderid"))
+
+        if request.query_params_format.get("startdate") and request.query_params_format.get("enddate"):
+            query_format = query_format + " and t1.createtime>={} and t1.createtime<={}".format(
+                UtilTime().string_to_timestamp(request.query_params_format.get("startdate")),
+                UtilTime().string_to_timestamp(request.query_params_format.get("enddate"))
+            )
+
+        # limit_format = " limit %d,%d" % ((page - 1) * page_size, page_size)
+
+        orders = list(Order.objects.raw("""
+                SELECT t1.*,t2.name as cpname,t2.url as cpurl,t3.name as gamename,t4.name as minitypename FROM `order` as t1
+                INNER JOIN `cp` as t2 ON t1.cpid = t2.id
+                INNER JOIN `cpgames` as t3 ON t1.gamesid = t3.typeid
+                INNER JOIN `cpminitype` as t4 ON t3.minitypeid = t4.typeid
+                WHERE 1=1 %s order by t1.createtime desc
+            """ % (query_format), query_params))
+
+        page=int(request.query_params_format.get('page'))
+        page_size=int(request.query_params_format.get('page_size'))
+        page_start = page_size * page - page_size
+        page_end = page_size * page
+
+        count = len(orders)
+
+        return {"data": OrderSerializer(orders[page_start:page_end], many=True).data,"count":count}
+
     @list_route(methods=['POST'])
     @Core_connector(isPasswd=True,isTicket=True,isTransaction=True)
     def delOrder(self, request):
@@ -167,3 +216,27 @@ class OrderAPIView(viewsets.ViewSet):
         user.save()
 
         return None
+
+
+    @list_route(methods=['GET'])
+    @Core_connector(isPasswd=True, isTicket=True)
+    def getDataCount(self, request):
+
+        pass
+        data={
+            "amount" : 0.0,
+            "zjamount":0.0
+        }
+
+        ut = UtilTime()
+
+        if request.query_params_format.get("startdate") and request.query_params_format.get("enddate"):
+            start = ut.string_to_timestamp(request.query_params_format.get("startdate"))
+            end = ut.string_to_timestamp(request.query_params_format.get("enddate"))
+        else:
+            start = ut.string_to_timestamp(ut.arrow_to_string(format_v="YYYY-MM-DD") + ' 00:00:00')
+            end = ut.string_to_timestamp(ut.arrow_to_string(format_v="YYYY-MM-DD") + ' 23:59:59')
+
+        data["amount"] = sum([ item.amount for item in Order.objects.filter(status__in=['0','1','3'],createtime__gte=start,createtime__lte=end) ])
+
+        return {"data":data}

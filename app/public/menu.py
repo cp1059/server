@@ -134,6 +134,26 @@ first = [
         ]
     },
     {
+        "label": "订单管理",
+        "path": '/orderinfo',
+        "meta": {
+            "i18n": 'orderinfo',
+        },
+        "icon": 'el-icon-setting',
+        "children": [
+            {
+                "label": "订单列表",
+                "path": 'order',
+                "component": 'views/custom/orderinfo/order',
+                "meta": {
+                    "i18n": 'order'
+                },
+                "icon": 'el-icon-setting',
+                "children": []
+            }
+        ]
+    },
+    {
         "label": "系统管理",
         "path": '/systemManagement',
         "meta": {
